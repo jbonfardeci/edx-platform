@@ -10,6 +10,8 @@ from functools import partial
 
 from django.http import Http404, HttpResponse
 
+from mobile_api.utils import should_allow_mobile_access
+
 from rest_framework import generics, permissions
 from rest_framework.authentication import OAuth2Authentication, SessionAuthentication
 from rest_framework.response import Response
@@ -17,7 +19,6 @@ from rest_framework.exceptions import PermissionDenied
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator
 
-from courseware.access import has_access
 from xmodule.exceptions import NotFoundError
 from xmodule.modulestore.django import modulestore
 
@@ -139,7 +140,7 @@ def get_mobile_course(course_id, user):
     requesting user is a staff member.
     """
     course = modulestore().get_course(course_id, depth=None)
-    if course.mobile_available or has_access(user, 'staff', course):
+    if should_allow_mobile_access(course, user):
         return course
 
     raise PermissionDenied(detail="Course not available on mobile.")

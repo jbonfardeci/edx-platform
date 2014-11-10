@@ -1,6 +1,9 @@
 """
 Tests for video outline API
 """
+
+import ddt
+
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
 from xmodule.video_module import transcripts_utils
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
@@ -11,6 +14,7 @@ from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.conf import settings
 from rest_framework.test import APITestCase
+from student import auth
 from edxval import api
 from uuid import uuid4
 import copy
@@ -19,6 +23,7 @@ TEST_DATA_CONTENTSTORE = copy.deepcopy(settings.CONTENTSTORE)
 TEST_DATA_CONTENTSTORE['DOC_STORE_CONFIG']['db'] = 'test_xcontent_%s' % uuid4().hex
 
 
+@ddt.ddt
 @override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE, CONTENTSTORE=TEST_DATA_CONTENTSTORE)
 class TestVideoOutline(ModuleStoreTestCase, APITestCase):
     """
@@ -99,11 +104,25 @@ class TestVideoOutline(ModuleStoreTestCase, APITestCase):
 
         self.client.login(username=self.user.username, password='test')
 
-    def test_course_not_available(self):
+    @ddt.data(
+        (auth.CourseBetaTesterRole, True),
+        (auth.CourseStaffRole, True),
+        (auth.CourseInstructorRole, True),
+        (None, False)
+    )
+    @ddt.unpack
+    def test_non_mobile_access(self, role, should_succeed):
         nonmobile = CourseFactory.create()
+
+        if role:
+            role(nonmobile.id).add_users(self.user)
+
         url = reverse('video-summary-list', kwargs={'course_id': unicode(nonmobile.id)})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        if should_succeed:
+            self.assertEqual(response.status_code, 200)
+        else:
+            self.assertEqual(response.status_code, 403)
 
     def _get_video_summary_list(self):
         """
