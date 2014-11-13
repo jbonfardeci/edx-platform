@@ -154,7 +154,7 @@ class CourseEmailTemplateFormTest(ModuleStoreTestCase):
     def test_missing_message_body_in_html(self):
         """
         Asserts that we fail validation if we do not have the {{message_body}} tag
-        in the
+        in the submitted HTML template
         """
         form_data = {
             'html_template': '',
@@ -167,7 +167,7 @@ class CourseEmailTemplateFormTest(ModuleStoreTestCase):
     def test_missing_message_body_in_plain(self):
         """
         Asserts that we fail validation if we do not have the {{message_body}} tag
-        in the
+        in the submitted plain template
         """
         form_data = {
             'html_template': '{{message_body}}',
@@ -195,6 +195,42 @@ class CourseEmailTemplateFormTest(ModuleStoreTestCase):
         # Note this will throw an exception if it is not found
         CourseEmailTemplate.objects.get(name=None)
 
+    def test_name_with_only_spaces_is_null(self):
+        """
+        Asserts that submitting a CourseEmailTemplateForm just blank whitespace is stored
+        as a NULL in the database
+        """
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': '   '
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        # now inspect the database and make sure the whitespace only name was stored as a NULL
+        # Note this will throw an exception if it is not found
+        CourseEmailTemplate.objects.get(name=None)
+
+    def test_name_with_spaces_is_trimmed(self):
+        """
+        Asserts that submitting a CourseEmailTemplateForm with a name that contains
+        whitespace at the beginning or end of a name is stripped
+        """
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': ' foo  '
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        # now inspect the database and make sure the name is properly
+        # stripped
+        CourseEmailTemplate.objects.get(name='foo')
+
     def test_non_blank_name(self):
         """
         Asserts that submitting a CourseEmailTemplateForm with a non-blank name
@@ -219,24 +255,35 @@ class CourseEmailTemplateFormTest(ModuleStoreTestCase):
         that already exists
         """
 
-        # first try in the NULL case
+        # first set up one template
         form_data = {
             'html_template': '{{message_body}}',
             'plain_template': '{{message_body}}',
-            'name': ''
+            'name': 'foo'
         }
         form = CourseEmailTemplateForm(form_data)
         self.assertTrue(form.is_valid())
         form.save()
 
+        # try to submit form with the same name
         form = CourseEmailTemplateForm(form_data)
         self.assertFalse(form.is_valid())
 
-        # then try in the non-NULL case
+        # try again with a name with extra whitespace
+        # this should fail as we strip the whitespace away
         form_data = {
             'html_template': '{{message_body}}',
             'plain_template': '{{message_body}}',
-            'name': 'foo'
+            'name': '  foo '
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertFalse(form.is_valid())
+
+        # then try a different name
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': 'bar'
         }
         form = CourseEmailTemplateForm(form_data)
         self.assertTrue(form.is_valid())
