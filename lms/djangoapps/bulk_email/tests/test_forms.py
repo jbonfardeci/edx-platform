@@ -15,8 +15,8 @@ from xmodule.modulestore import ModuleStoreEnum
 
 from mock import patch
 
-from bulk_email.models import CourseAuthorization
-from bulk_email.forms import CourseAuthorizationAdminForm
+from bulk_email.models import CourseAuthorization, CourseEmailTemplate
+from bulk_email.forms import CourseAuthorizationAdminForm, CourseEmailTemplateForm
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 
 
@@ -145,3 +145,102 @@ class CourseAuthorizationXMLFormTest(ModuleStoreTestCase):
 
         with self.assertRaisesRegexp(ValueError, "The CourseAuthorization could not be created because the data didn't validate."):
             form.save()
+
+
+@override_settings(MODULESTORE=TEST_DATA_MONGO_MODULESTORE)
+class CourseEmailTemplateFormTest(ModuleStoreTestCase):
+    """Test the CourseEmailTemplateForm that is used in the Django admin subsystem."""
+
+    def test_missing_message_body_in_html(self):
+        """
+        Asserts that we fail validation if we do not have the {{message_body}} tag
+        in the
+        """
+        form_data = {
+            'html_template': '',
+            'plain_template': '{{message_body}}',
+            'name': ''
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertFalse(form.is_valid())
+
+    def test_missing_message_body_in_plain(self):
+        """
+        Asserts that we fail validation if we do not have the {{message_body}} tag
+        in the
+        """
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '',
+            'name': ''
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertFalse(form.is_valid())
+
+    def test_blank_name_is_null(self):
+        """
+        Asserts that submitting a CourseEmailTemplateForm with a blank name is stored
+        as a NULL in the database
+        """
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': ''
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        # now inspect the database and make sure the blank name was stored as a NULL
+        # Note this will throw an exception if it is not found
+        CourseEmailTemplate.objects.get(name=None)
+
+    def test_non_blank_name(self):
+        """
+        Asserts that submitting a CourseEmailTemplateForm with a non-blank name
+        can be found in the database under than name as a look-up key
+        """
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': 'foo'
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        # now inspect the database and make sure the blank name was stored as a NULL
+        # Note this will throw an exception if it is not found
+        CourseEmailTemplate.objects.get(name='foo')
+
+    def test_duplicate_name(self):
+        """
+        Assert that we cannot submit a CourseEmailTemplateForm with a name
+        that already exists
+        """
+
+        # first try in the NULL case
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': ''
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        form = CourseEmailTemplateForm(form_data)
+        self.assertFalse(form.is_valid())
+
+        # then try in the non-NULL case
+        form_data = {
+            'html_template': '{{message_body}}',
+            'plain_template': '{{message_body}}',
+            'name': 'foo'
+        }
+        form = CourseEmailTemplateForm(form_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        form = CourseEmailTemplateForm(form_data)
+        self.assertFalse(form.is_valid())
