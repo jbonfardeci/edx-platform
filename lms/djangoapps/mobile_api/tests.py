@@ -46,3 +46,10 @@ class TestMobileApiUtils(ModuleStoreTestCase, APITestCase):
         user = UserFactory.create()
         course = CourseFactory.create(mobile_available=True)
         self.assertTrue(should_allow_mobile_access(course, user))
+
+    def test_missing_course(self):
+        """
+        Verifies that we handle the case where a course doesn't exist
+        """
+        user = UserFactory.create()
+        self.assertFalse(should_allow_mobile_access(None, user))

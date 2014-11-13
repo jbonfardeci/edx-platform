@@ -14,9 +14,12 @@ def should_allow_mobile_access(course, user):
     that gives them access anyway
     """
 
+    # The course doesn't always really exist -- we can have bad data in the enrollments
+    # pointing to non-existent (or removed) courses, in which case `course` is None.
+    if not course:
+        return None
+
     # Implicitly includes instructor role via the following has_access check
     role = CourseBetaTesterRole(course.id)
 
-    # The course doesn't always really exist -- we can have bad data in the enrollments
-    # pointing to non-existent (or removed) courses, in which case `course` is None.
-    return course and (course.mobile_available or auth.has_access(user, role) or access.has_access(user, 'staff', course))
+    return course.mobile_available or auth.has_access(user, role) or access.has_access(user, 'staff', course)
