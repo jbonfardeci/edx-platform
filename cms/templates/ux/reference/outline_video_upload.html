@@ -176,18 +176,18 @@ from django.core.urlresolvers import reverse
                 </colgroup>
                 <thead>
                   <tr>
-                    <th class="sr title-col">Filename</th>
-                    <th class="sr size-col">Size</th>
-                    <th class="sr date-col">Date Added</th>
-                    <th class="sr embed-col">Embed URL</th>
-                    <th class="sr actions-col">Actions</th>
+                    <th class="sr title-col" scope="col">Filename</th>
+                    <th class="sr size-col" scope="col">Size</th>
+                    <th class="sr date-col" scope="col">Date Added</th>
+                    <th class="sr embed-col" scope="col">Embed URL</th>
+                    <th class="sr actions-col" scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="asset-table-body">
                   <tr>
-                    <td class="title-col">
+                    <th class="title-col" scope="row">
                       <a href="#">Something-random</a>
-                    </td>
+                    </th>
                     <td class="size-col">
                       4.35MB
                     </td>
@@ -198,13 +198,13 @@ from django.core.urlresolvers import reverse
                       MIT4758331-V004100
                     </td>
                     <td class="actions-col">
-                      <span class="success">Complete</span>
+                      <span class="info">Complete</span>
                     </td>
                   </tr>
                   <tr>
-                    <td class="title-col">
+                    <th class="title-col" scope="row">
                       <a href="#">section1-unit3</a>
-                    </td>
+                    </th>
                     <td class="size-col">
                       1.05GB
                     </td>
@@ -214,6 +214,21 @@ from django.core.urlresolvers import reverse
                     <td class="embed-col"></td>
                     <td class="actions-col">
                       <span class="info">In Progress</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="title-col" scope="row">
+                      <a href="#">americas-funniest-video.mp4</a>
+                    </th>
+                    <td class="size-col">
+                      53.44MB
+                    </td>
+                    <td class="date-col">
+                      Nov. 12, 2014 at 5:11pm
+                    </td>
+                    <td class="embed-col"></td>
+                    <td class="actions-col">
+                      <span class="error">File Corrupt</span>
                     </td>
                   </tr>
                 </tbody>
@@ -245,6 +260,17 @@ from django.core.urlresolvers import reverse
       </aside>
 
     </section>
+  </div>
+
+  <div class="upload-modal modal">
+    <button type="button" class="close-button" aria-describedby="modal-title"><i class="icon icon-remove-sign"></i><span class="sr">Close</span></button>
+    <div class="modal-body">
+      <h1 class="title sr" id="modal-title">Preview Uploaded File</h1>
+      <div class="embeddable"></div>
+      <div class="filename">
+        <p>something-random.mp4</p>
+      </div>
+    </div>
   </div>
 
 </div>

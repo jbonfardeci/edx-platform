@@ -155,15 +155,22 @@
       table {
         font-size: 80%;
 
-        td.title-col {
+        tbody {
 
-          a {
+          th {
+            background: inherit;
+            padding: 10px;
             font-weight: 600;
-          }
-        }
 
-        td.actions-col {
-          text-transform: uppercase;
+            a {
+              color: $blue;
+              font-weight: 600;
+            }
+          }
+
+          td.actions-col {
+            text-transform: uppercase;
+          }
         }
       }
     }
