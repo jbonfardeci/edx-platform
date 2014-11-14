@@ -66,7 +66,7 @@ class EdxNotesPageView(NoteChild):
 
     @property
     def children(self):
-        children = self.q(css=self._bounded_selector(".edx-notes-page-item"))
+        children = self.q(css=self._bounded_selector(self.CHILD_SELECTOR))
         return [EdxNotesPageItem(self.browser, child.get_attribute("id")) for child in children]
 
 
