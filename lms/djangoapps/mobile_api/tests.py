@@ -3,17 +3,15 @@ Tests for mobile API utilities
 """
 
 import ddt
-
-from courseware.tests.factories import UserFactory
-
 from rest_framework.test import APITestCase
 
+from courseware.tests.factories import UserFactory
 from student import auth
-
-from mobile_api.utils import allow_mobile_access_to_enrolled_course
 
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
+
+from .utils import allow_mobile_access_to_enrolled_course
 
 ROLE_CASES = (
     (auth.CourseBetaTesterRole, True),

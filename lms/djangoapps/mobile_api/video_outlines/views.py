@@ -10,8 +10,6 @@ from functools import partial
 
 from django.http import Http404, HttpResponse
 
-from mobile_api.utils import allow_mobile_access_to_enrolled_course
-
 from rest_framework import generics, permissions
 from rest_framework.authentication import OAuth2Authentication, SessionAuthentication
 from rest_framework.response import Response
@@ -21,6 +19,8 @@ from opaque_keys.edx.locator import BlockUsageLocator
 
 from xmodule.exceptions import NotFoundError
 from xmodule.modulestore.django import modulestore
+
+from mobile_api.utils import allow_mobile_access_to_enrolled_course
 
 from .serializers import BlockOutline, video_summary
 

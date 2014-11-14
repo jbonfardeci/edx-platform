@@ -3,14 +3,14 @@ Views for user API
 """
 from django.shortcuts import redirect
 
-from mobile_api.utils import allow_mobile_access_to_enrolled_course
-
 from rest_framework import generics, permissions
 from rest_framework.authentication import OAuth2Authentication, SessionAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from student.models import CourseEnrollment, User
+
+from mobile_api.utils import allow_mobile_access_to_enrolled_course
 
 from .serializers import CourseEnrollmentSerializer, UserSerializer
 

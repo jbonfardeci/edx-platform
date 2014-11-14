@@ -21,6 +21,10 @@ def allow_mobile_access_to_enrolled_course(course, user):
         return None
 
     # Implicitly includes instructor role via the following has_access check
-    role = CourseBetaTesterRole(course.id)
+    beta_tester_role = CourseBetaTesterRole(course.id)
 
-    return course.mobile_available or auth.has_access(user, role) or access.has_access(user, 'staff', course)
+    return (
+        course.mobile_available
+        or auth.has_access(user, beta_tester_role)
+        or access.has_access(user, 'staff', course)
+    )
