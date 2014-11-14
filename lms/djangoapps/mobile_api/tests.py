@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 
 from student import auth
 
-from mobile_api.utils import should_allow_mobile_access
+from mobile_api.utils import allow_mobile_access_to_enrolled_course
 
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
@@ -38,7 +38,7 @@ class TestMobileApiUtils(ModuleStoreTestCase, APITestCase):
         course = CourseFactory.create(mobile_available=False)
         if role:
             role(course.id).add_users(user)
-        self.assertEqual(should_have_access, should_allow_mobile_access(course, user))
+        self.assertEqual(should_have_access, allow_mobile_access_to_enrolled_course(course, user))
 
     def test_mobile_explicit_access(self):
         """
@@ -46,11 +46,11 @@ class TestMobileApiUtils(ModuleStoreTestCase, APITestCase):
         """
         user = UserFactory.create()
         course = CourseFactory.create(mobile_available=True)
-        self.assertTrue(should_allow_mobile_access(course, user))
+        self.assertTrue(allow_mobile_access_to_enrolled_course(course, user))
 
     def test_missing_course(self):
         """
         Verifies that we handle the case where a course doesn't exist
         """
         user = UserFactory.create()
-        self.assertFalse(should_allow_mobile_access(None, user))
+        self.assertFalse(allow_mobile_access_to_enrolled_course(None, user))

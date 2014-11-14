@@ -10,7 +10,7 @@ from functools import partial
 
 from django.http import Http404, HttpResponse
 
-from mobile_api.utils import should_allow_mobile_access
+from mobile_api.utils import allow_mobile_access_to_enrolled_course
 
 from rest_framework import generics, permissions
 from rest_framework.authentication import OAuth2Authentication, SessionAuthentication
@@ -140,7 +140,7 @@ def get_mobile_course(course_id, user):
     requesting user is a staff member.
     """
     course = modulestore().get_course(course_id, depth=None)
-    if should_allow_mobile_access(course, user):
+    if allow_mobile_access_to_enrolled_course(course, user):
         return course
 
     raise PermissionDenied(detail="Course not available on mobile.")
