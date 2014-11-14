@@ -25,8 +25,12 @@ class TestProblem(object):
 
     The purpose of this class is to imitate any problem.
     """
-    def __init__(self):
-        self.system = ''
+    def __init__(self, course):
+        self.system = MagicMock(is_author_mode=False)
+        self.scope_ids = MagicMock(usage_id="test_usage_id")
+        self.runtime = MagicMock(course_id=course.id)
+        self.descriptor = MagicMock()
+        self.descriptor.runtime.modulestore.get_course.return_value = course
 
     def get_html(self):
         """
@@ -42,14 +46,26 @@ class EdxNotesDecoratorTest(TestCase):
     """
 
     def setUp(self):
-        self.problem = TestProblem()
+        self.course = CourseFactory.create(edxnotes=True)
+        self.user = UserFactory.create(username="Bob", email="bob@example.com", password="edx")
+        self.client.login(username=self.user.username, password="edx")
+        self.problem = TestProblem(self.course)
 
     @patch.dict("django.conf.settings.FEATURES", {'ENABLE_EDXNOTES': True})
     def test_edxnotes_enabled(self):
         """
         Tests if get_html is wrapped when feature flag is on.
         """
+        self.course.tabs.append(EdxNotesTab())
+        modulestore().update_item(self.course, self.user.id)
         self.assertIn('edx-notes-wrapper', self.problem.get_html())
+
+    @patch.dict("django.conf.settings.FEATURES", {'ENABLE_EDXNOTES': True})
+    def test_edxnotes_disabled_if_edxnotes_flag_is_false(self):
+        """
+        Tests if get_html is not wrapped when feature flag is off.
+        """
+        self.assertEqual('original_get_html', self.problem.get_html())
 
     @patch.dict("django.conf.settings.FEATURES", {'ENABLE_EDXNOTES': False})
     def test_edxnotes_disabled(self):
@@ -62,7 +78,7 @@ class EdxNotesDecoratorTest(TestCase):
         """
         Tests if get_html is not wrapped when problem is rendered in Studio.
         """
-        self.problem.system = MagicMock(is_author_mode=True)
+        self.problem.system.is_author_mode = True
         self.assertEqual('original_get_html', self.problem.get_html())
 
 
