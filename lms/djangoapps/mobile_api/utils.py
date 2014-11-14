@@ -7,6 +7,7 @@ from courseware import access
 from student.roles import CourseBetaTesterRole
 from student import auth
 
+
 def should_allow_mobile_access(course, user):
     """
     Determines whether a user has access to a course in a mobile context.
