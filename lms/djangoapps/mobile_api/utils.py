@@ -8,11 +8,12 @@ from student.roles import CourseBetaTesterRole
 from student import auth
 
 
-def allow_mobile_access_to_enrolled_course(course, user):
+def mobile_available_when_enrolled(course, user):
     """
     Determines whether a user has access to a course in a mobile context.
     Checks if the course is marked as mobile_available or the user has extra permissions
-    that gives them access anyway
+    that gives them access anyway.
+    Does not check if the user is actually enrolled in the course
     """
 
     # The course doesn't always really exist -- we can have bad data in the enrollments

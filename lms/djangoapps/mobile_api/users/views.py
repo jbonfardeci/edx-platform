@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from student.models import CourseEnrollment, User
 
-from mobile_api.utils import allow_mobile_access_to_enrolled_course
+from mobile_api.utils import mobile_available_when_enrolled
 
 from .serializers import CourseEnrollmentSerializer, UserSerializer
 
@@ -128,5 +128,5 @@ def mobile_course_enrollments(enrollments, user):
     for enr in enrollments:
         course = enr.course
 
-        if allow_mobile_access_to_enrolled_course(course, user):
+        if mobile_available_when_enrolled(course, user):
             yield enr
