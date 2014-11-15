@@ -5,7 +5,7 @@ from edxnotes.helpers import (
     get_endpoint,
     get_token,
     generate_uid,
-    edxnotes_enabled_for_course,
+    is_feature_enabled,
 )
 from edxmako.shortcuts import render_to_string
 from django.conf import settings
@@ -26,7 +26,7 @@ def edxnotes(cls):
 
         # Must be disabled in Studio or depends on the feature flag/advanced
         # settings of the course.
-        if is_studio or not edxnotes_enabled_for_course(course):
+        if is_studio or not is_feature_enabled(course):
             return original_get_html(self, *args, **kwargs)
         else:
             return render_to_string('edxnotes_wrapper.html', {

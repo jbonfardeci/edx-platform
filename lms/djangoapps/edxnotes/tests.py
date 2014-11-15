@@ -139,7 +139,7 @@ class EdxNotesHelpersTest(TestCase):
         contain a tab with type "edxnotes."
         """
         self.course.tabs = []
-        self.assertFalse(helpers.edxnotes_enabled_for_course(self.course))
+        self.assertFalse(helpers.is_feature_enabled(self.course))
 
     def test_edxnotes_enabled(self):
         """
@@ -149,7 +149,7 @@ class EdxNotesHelpersTest(TestCase):
         self.course.tabs = [{"type": "foo"},
                             {"name": "Notes", "type": "edxnotes"},
                             {"type": "bar"}]
-        self.assertTrue(helpers.edxnotes_enabled_for_course(self.course))
+        self.assertTrue(helpers.is_feature_enabled(self.course))
 
     def test_get_endpoint(self):
         """

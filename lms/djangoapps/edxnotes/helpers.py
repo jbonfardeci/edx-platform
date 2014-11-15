@@ -12,90 +12,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext as _
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
-# TODO: Remove these imports before merge!!!
-import random
-# end TODO
-
 log = logging.getLogger(__name__)
-
-
-# To start stub server on devstack:
-# cd common/djangoapps/terrain
-# python -m stubs.start edxnotes 8042
-# Uncomment function `create_notes(20, username, unicode(course_id).encode('utf-8'))`
-# to create 20 notes for the user in the course and refresh Notes page.
-# !!! Do not forget comment it out again after that and restart the server.
-
-# TODO: Remove this function before merge!!!
-def _get_dummy_notes(count, user, course):
-    """
-    Returns a list of dummy notes.
-    """
-    html_modules = modulestore().get_items(
-        course.id, qualifiers={
-            'category': 'html',
-        },
-    )
-    usage_keys = [unicode(module.scope_ids.usage_id) for module in html_modules]
-    return [_get_dummy_note(user=user, course_id=unicode(course.id), usage_keys=usage_keys) for i in xrange(count)]  # pylint: disable=unused-variable
-# end TODO
-
-
-# TODO: Remove this function before merge!!!
-def _get_dummy_note(user="dummy-user-id", course_id="dummy-course-id", usage_keys=[]):
-    """
-    Returns a single dummy note.
-    """
-    nid = uuid4().hex
-    text = [
-        (
-            "Lorem Ipsum is simply dummy text of the printing and typesetting "
-            "industry. Lorem Ipsum has been the industry's standard dummy text ever "
-            "since the 1500s, when an unknown printer took a galley of type and "
-            "scrambled it to make a type specimen book. It has survived not only "
-            "five centuries, but also the leap into electronic typesetting, remaining "
-            "essentially unchanged. It was popularised in the 1960s with the release "
-            "of Letraset sheets containing Lorem Ipsum passages, and more recently "
-            "with desktop publishing software like Aldus PageMaker including "
-            "versions of Lorem Ipsum."
-        ),
-        "test",
-        "test test",
-    ]
-    quote = [
-        (
-            "Lorem Ipsum is simply dummy text of the printing and typesetting "
-            "industry. Lorem Ipsum has been the industry's standard dummy text ever "
-            "since the 1500s, when an unknown printer took a galley of type and "
-            "scrambled it to make a type specimen book. "
-        ),
-        ""
-    ]
-
-    return {
-        "id": nid,
-        "user": user,
-        "usage_id": random.choice(usage_keys),
-        "course_id": course_id,
-        "text": random.choice(text),
-        "quote": random.choice(quote),
-        "ranges": [
-            {
-                "start": "/p[1]",
-                "end": "/p[1]",
-                "startOffset": 0,
-                "endOffset": 10,
-            }
-        ],
-    }
-# end TODO
-
-
-# TODO: Remove this function before merge!!!
-def create_notes(count, user, course):
-    dummy_notes = _get_dummy_notes(count, user, course)
-    requests.post(settings.EDXNOTES_INTERFACE["url"] + "create_notes", data=json.dumps(dummy_notes))
-# end TODO
 
 
 def get_token():
@@ -109,9 +26,6 @@ def get_notes(user, course):
     """
     Returns all notes for the user.
     """
-    # TODO: Remove this line before merge!!!
-    # create_notes(20, user.username, course)
-    # end TODO
     url = get_endpoint("/annotations")
     response = requests.get(url, params={
         'user': user.username,
@@ -207,7 +121,7 @@ def generate_uid():
     return uuid4().int  # pylint: disable=no-member
 
 
-def edxnotes_enabled_for_course(course):
+def is_feature_enabled(course):
     """
     Returns True if the edxnotes app is enabled for the course, False otherwise.
 

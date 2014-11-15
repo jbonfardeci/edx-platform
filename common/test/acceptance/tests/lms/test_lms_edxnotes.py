@@ -329,11 +329,11 @@ class EdxNotesPageTest(UniqueCourseTest):
             self.assertEqual(item.unit_name, unit_name)
             self.assertEqual(item.time_updated, time_updated)
             if text is not None and quote is not None:
-                self.assertEqual(item.title_highlighted, "Highlighted & Noted in:")
+                self.assertEqual(item.title_highlighted, "HIGHLIGHTED & NOTED IN:")
             elif text is not None:
-                self.assertEqual(item.title_highlighted, "Highlighted in:")
+                self.assertEqual(item.title_highlighted, "HIGHLIGHTED IN:")
             elif quote is not None:
-                self.assertEqual(item.title_highlighted, "Noted in:")
+                self.assertEqual(item.title_highlighted, "NOTED IN:")
 
         self.notes_page.visit()
         items = self.notes_page.children

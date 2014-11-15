@@ -12,7 +12,7 @@ from edxnotes.helpers import (
     get_endpoint,
     get_token,
     get_notes,
-    edxnotes_enabled_for_course
+    is_feature_enabled
 )
 
 
@@ -22,7 +22,7 @@ def edxnotes(request, course_id):
     course_key = SlashSeparatedCourseKey.from_deprecated_string(course_id)
     course = get_course_with_access(request.user, "load", course_key)
 
-    if not edxnotes_enabled_for_course(course):
+    if not is_feature_enabled(course):
         raise Http404
 
     notes = get_notes(request.user, course)
