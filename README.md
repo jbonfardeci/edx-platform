@@ -1,78 +1,65 @@
-This is the main edX platform which consists of LMS and Studio.
+Install Devstack on fresh Ubuntu 12.04 LTS Server
+-------------------------------------------------
+...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMWare if you can; Virtual Box is too flaky.
 
-See [code.edx.org](http://code.edx.org/) for other parts of the edX code base.
+1. Download Ubuntu Server 12.0.4 ISO from: http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso
 
-Installation
-------------
+2. Mount ISO with VMWare and follow steps to install.
 
-Please refer to the following wiki pages in our [configuration repo](https://github.com/edx/configuration) to install edX:
+Tip: Take snapshots of your virtual machine before installing EdX, after a successful install of EdX, after major changes, often. You may need to revert to a previous state after breathing on the EdX platform. Troubleshooting is way to hard if you run into problems; revert to the last working snapshot.
 
-* [edX Developer Stack](https://github.com/edx/configuration/wiki/edX-Developer-Stack)
-<br/>These instructions are for developers who want to contribute or make changes to the edX source code.
-* [edX Production Stack](https://github.com/edx/configuration/wiki/edX-Production-Stack)
-<br/>Using Vagrant/Virtualbox this will setup all edX services on a single server in a production like configuration.
-* [edX Ubuntu 12.04 64-bit Installation](https://github.com/edx/configuration/wiki/edX-Ubuntu-12.04-64-bit-Installation)
-<br/>This will install edX on an existing Ubuntu 12.04 server.
+3. Install server OS updates
 
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo reboot
 
-License
--------
+4. Install:
+sudo apt-get install -y build-essential software-properties-common python-software-properties curl git-core libxml2-dev libxslt1-dev libfreetype6-dev python-pip python-apt python-dev
 
-The code in this repository is licensed under version 3 of the AGPL unless
-otherwise noted. Please see the
-[`LICENSE`](https://github.com/edx/edx-platform/blob/master/LICENSE) file
-for details.
+5. upgrade Python Package Index
+sudo pip install --upgrade pip
 
-Documentation
--------------
+6. upgrade virtualenv for running in virtual environment
+sudo pip install --upgrade virtualenv
 
-Documentation for developers, researchers, and course staff is located in the
-`docs` subdirectory. Documentation is built using
-[Sphinx](http://sphinx-doc.org/): you can [view the built documentation on
-ReadTheDocs](http://docs.edx.org/).
+7. On the new server, clone the configuration repo:
+cd /var/tmp
+git clone -b release https://github.com/edx/configuration
 
-Getting Help
-------------
+7.1 reboot
+sudo reboot
 
-If you're having trouble, we have several different mailing lists where you can
-ask for help:
+7.2 To allow password based SSH authentication, edit the common role inside of configuration/playbooks/roles/common/defaults/main.yml and set COMMON_SSH_PASSWORD_AUTH to "yes"
 
-* [openedx-ops](https://groups.google.com/forum/#!forum/openedx-ops):
-  everything related to *running* Open edX. This includes
-  installation issues, server management, cost analysis, and so on.
-* [openedx-translation](https://groups.google.com/forum/#!forum/openedx-translation):
-  everything related to *translating* Open edX into
-  other languages. This includes volunteer translators, our internationalization
-  infrastructure, issues related to Transifex, and so on.
-* [openedx-analytics](https://groups.google.com/forum/#!forum/openedx-analytics):
-  everything related to *analytics* in Open edX.
-* [edx-code](https://groups.google.com/forum/#!forum/edx-code):
-  everything related to the *code* in Open edX. This includes
-  feature requests, idea proposals, refactorings, and so on.
+8. Install the ansible requirements
 
-You can also join our IRC channel: [`#edx-code` on Freenode](http://webchat.freenode.net/?channels=edx-code).
+cd /var/tmp/configuration
+sudo pip install -r requirements.txt
 
-Issue Tracker
--------------
+8.1 sudo reboot
 
-[We use JIRA for our issue tracker](https://openedx.atlassian.net/), not
-GitHub Issues. To file a bug or request a new feature, please make a free
-account on our JIRA and create a new issue! If you're filing a bug,
-we'd appreciate it if you would follow
-[our guidelines for filing high-quality, actionable bug reports](https://openedx.atlassian.net/wiki/display/SUST/How+to+File+a+Quality+Bug+Report).
-Thanks!
+9. Run the edx_sandbox.yml playbook in the configuration/playbooks directory, most likely to fail:
+cd /var/tmp/configuration/playbooks
+sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost,"
 
-How to Contribute
------------------
+10. It will probably fail on installing NTLK; rerun ansible playbooks:
 
-Contributions are very welcome, but for legal reasons, you must submit a signed
-[individual contributor's agreement](http://code.edx.org/individual-contributor-agreement.pdf)
-before we can accept your contribution. See our
-[CONTRIBUTING](https://github.com/edx/edx-platform/blob/master/CONTRIBUTING.rst)
-file for more information -- it also contains guidelines for how to maintain
-high code quality, which will make your contribution more likely to be accepted.
+sudo reboot
 
-Reporting Security Issues
--------------------------
+10.1 delete /var/tmp/configuration
 
-Please do not report security issues in public. Please email security@edx.org
+rm -rf /var/tmp/configuration
+
+10.2 and then run
+
+cd /var/tmp
+git clone -b release https://github.com/edx/configuration
+
+cd /var/tmp/configuration
+sudo pip install -r requirements.txt
+
+10.3 Then run
+
+cd /var/tmp/configuration/playbooks
+sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost," --limit @/home/<account_name>/edx_sandbox.retry
