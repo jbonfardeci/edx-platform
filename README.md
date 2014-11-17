@@ -1,6 +1,6 @@
-Install Devstack on fresh Ubuntu 12.04 LTS Server
+Install EdX Devstack on Fresh Ubuntu 12.0.4 LTS Server
 -------------------------------------------------
-...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMware if you can; Virtual Box is too flaky. http://chadoh.com/why-you-shouldnt-use-vagrant-real-talk-from-a-vagrant-burnout
+...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMware if you can; Virtual Box is too flaky. On Vagrant frustrations -- http://chadoh.com/why-you-shouldnt-use-vagrant-real-talk-from-a-vagrant-burnout
 
 Download Ubuntu Server 12.0.4 ISO from: http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso
 
