@@ -1,6 +1,6 @@
 Install Devstack on fresh Ubuntu 12.04 LTS Server
 -------------------------------------------------
-####...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMware if you can; Virtual Box is too flaky. http://chadoh.com/why-you-shouldnt-use-vagrant-real-talk-from-a-vagrant-burnout
+...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMware if you can; Virtual Box is too flaky. http://chadoh.com/why-you-shouldnt-use-vagrant-real-talk-from-a-vagrant-burnout
 
 Download Ubuntu Server 12.0.4 ISO from: http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso
 
@@ -57,21 +57,13 @@ It will probably fail on installing NTLK; rerun ansible playbooks:
 sudo reboot
 ```
 
-Delete /var/tmp/configuration
-```
-rm -rf /var/tmp/configuration
-```
-
-and then run
+Delete /var/tmp/configuration and reinstall. Replace <account_name> with your account name.
 ```
 cd /var/tmp
+rm -rf configuration
 git clone -b release https://github.com/edx/configuration
 cd configuration
 sudo pip install -r requirements.txt
-```
-
-Then run
-```
-cd /var/tmp/configuration/playbooks
+cd playbooks
 sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost," --limit @/home/<account_name>/edx_sandbox.retry
 ```
