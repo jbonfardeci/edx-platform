@@ -1,6 +1,40 @@
 Install EdX Devstack on Fresh Ubuntu 12.0.4 LTS Server
 -------------------------------------------------
-...because no one should be subjected to the problems with Vagrant and Virtual Box. Use VMware if you can; Virtual Box is too flaky. On Vagrant frustrations -- http://chadoh.com/why-you-shouldnt-use-vagrant-real-talk-from-a-vagrant-burnout
+Vagrant is an awesome tool but there are many, many problems with VirtualBox. After fighting SSH timeout issues for several days I opened the Vagrantfile to see if I could adjust settings for my environment: Mac OS 10.9 with VirtualBox 4.3.12 and Vagrant 1.6.5. I then saw a Ruby looping statement for detecing the Vagrant VMware Fusion plugin. The EdX team built a VMware box. Yes! VMware is rock solid, so I gladly paid $79 for the plugin here - http://www.vagrantup.com/vmware. 
+
+After purchasing the VMware plugin, you'll be emailed the download link for the license, `license.lic`. Download it to a new directory -- let's call it "VagrantLicense." Install it by running: 
+```
+mkdir VagrantLicense
+cd VagrantLicense
+$ vagrant plugin install vagrant-vmware-fusion
+$ vagrant plugin license vagrant-vmware-fusion license.lic
+```
+
+Now create a directory for your EdX devstack project wherever you like and download the EdX Vagrantfile:
+```
+mkdir devstack
+cd devstack
+curl -L https://raw.githubusercontent.com/edx/configuration/master/vagrant/release/devstack/Vagrantfile > Vagrantfile
+```
+
+We need to change the `unless Vagrant.has_plugin...` statement beginning on the second line of the Vagrant file, replacing `vagrant-vbguest` with `vagrant-vmware-fusion`. Open "Vagrantfile" in your favorite text editor and change the statement to match:
+
+```
+1 Vagrant.require_version ">= 1.5.3"
+2 unless Vagrant.has_plugin?("vagrant-vmware-fusion")
+  raise "Please install the vagrant-vmware-fusion plugin by running `vagrant plugin install vagrant-vmware-fusion`"
+end
+```
+
+Save and run this back in terminal:
+
+```
+vagrant plugin install vagrant-vmware-fusion
+vagrant up
+```
+Success!
+
+###OR Create your own server from scratch...
 
 Download Ubuntu Server 12.0.4 ISO from: http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso
 
