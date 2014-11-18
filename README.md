@@ -84,7 +84,7 @@ Upgrade Python Package Index
 sudo pip install --upgrade pip
 ```
 
-Upgrade virtualenv for running in virtual environment
+Upgrade virtualenv for running in virtual environment -- refer to the most excellent book, "Two Scoops of Django -- Best Practices for Django 1.6" by Daniel Greenfield and Audrey Roy 
 ```
 sudo pip install --upgrade virtualenv
 ```
