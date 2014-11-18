@@ -1,5 +1,5 @@
-Install EdX Devstack on Fresh Ubuntu 12.0.4 LTS Server
--------------------------------------------------
+Install a EdX Devstack Vagrant Box on VMware Fusion or Create Your Own Ubuntu 12.0.4 LTS Server
+------------------------------------------------------------------------------------------------
 Vagrant is an awesome tool but there are many, many problems with VirtualBox. After fighting SSH timeout issues for several days I opened the Vagrantfile to see if I could adjust settings for my environment: Mac OS 10.9 with VirtualBox 4.3.12 and Vagrant 1.6.5. I then saw a Ruby looping statement for detecing the Vagrant VMware Fusion plugin. The EdX team built a VMware box. Yes! VMware is rock solid, so I gladly paid $79 for the plugin here - http://www.vagrantup.com/vmware. 
 
 After purchasing the VMware plugin, you'll be emailed the download link for the license, `license.lic`. Download it to a new directory -- let's call it "VagrantLicense." Install it by running: 
@@ -86,7 +86,7 @@ cd /var/tmp/configuration/playbooks
 sudo ansible-playbook -c local ./edx_sandbox.yml -i "localhost,"
 ```
 
-It will probably fail on installing NTLK; rerun ansible playbooks:
+It will probably fail so you'll need to rerun ansible playbooks:
 ```
 sudo reboot
 ```
