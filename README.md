@@ -37,6 +37,22 @@ Save and run this back in terminal:
 vagrant plugin install vagrant-vmware-fusion
 vagrant up
 ```
+
+If you get th efollowing error while Vagrna tis setting up your server:
+```
+* The following required packages can not be built:
+
+* freetype
+```
+
+...run this
+```
+vagrant ssh
+sudo apt-get install libfreetype6-dev
+exit
+vagrant reload --provision
+```
+
 Success!
 
 ###OR Create your own server from scratch...
