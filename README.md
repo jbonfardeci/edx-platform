@@ -38,7 +38,7 @@ vagrant plugin install vagrant-vmware-fusion
 vagrant up
 ```
 
-If you get th efollowing error while Vagrna tis setting up your server:
+If you get the following error while Vagrant is setting up your server:
 ```
 * The following required packages can not be built:
 
