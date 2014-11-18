@@ -38,6 +38,11 @@ vagrant plugin install vagrant-vmware-fusion
 vagrant up
 ```
 
+You'll be asked to enter your password shortly. Enter the password for your host computer, not the virtual machine. This is to allow Vagrant to create the shared folders from the VM in your devstack directory - the EdX files you'll be editing.
+```
+Password: 
+```
+
 If you get the following error while Vagrant is setting up your server:
 ```
 * The following required packages can not be built:
