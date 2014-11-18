@@ -117,7 +117,7 @@ It will probably fail so you'll need to rerun ansible playbooks:
 sudo reboot
 ```
 
-Delete /var/tmp/configuration and reinstall. Replace <account_name> with your account name.
+Delete /var/tmp/configuration and reinstall. Replace &lt;account_name&gt; with your account name.
 ```
 cd /var/tmp
 rm -rf configuration
