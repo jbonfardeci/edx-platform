@@ -28,7 +28,7 @@ end
 
 Then change the private network IP to match your host computer's IP schema on this line. Replace `192.169.10.33` to match yours. On Mac, run `ifconfig` to get your IP, on Windows, `ipconfig`. For example, if your IP is `192.168.1.10` then change the IP in the Vagrantfile to `192.168.1.20` - as long as this isn't another IP on your network.
 ```
-config.vm.network :private_network, ip: "192.168.10.333"
+config.vm.network :private_network, ip: "192.168.10.33" # chnage this this match your IP schema
 ```
 
 Save and run this back in terminal:
