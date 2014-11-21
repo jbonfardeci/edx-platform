@@ -60,6 +60,68 @@ vagrant reload --provision
 
 Success!
 
+Now run 
+```
+vagrant ssh
+```
+
+Then
+```
+sudo su edxapp
+paver devstack lms
+```
+
+Switch to your local browser and enter the URL 127.0.0.0:8000
+
+If you get this welcome message in the site:
+```
+OperationFailure at /
+command SON([('authenticate', 1), ('user', u'edxapp'), ('nonce', u'a513b1220c786416'), ('key', u'1521314a7ba261acafe2bbe9d7169d66')]) failed: auth fails
+```
+
+See this thread: https://groups.google.com/forum/#!topic/edx-code/yt9n8p-YmSo
+
+Press Control-C to stop the Django web server, and exit ssh. ```exit```
+Then run:
+```
+vagrant ssh
+
+SCRIPTFILE=/tmp/fix-mongo.sh
+cat > "$SCRIPTFILE" << eof
+#!/bin/bash
+
+apt-get purge mongodb-10gen
+cd /edx/app/edx_ansible/edx_ansible/playbooks
+/edx/app/edx_ansible/venvs/edx_ansible/bin/ansible-playbook -i localhost, -c local run_role.yml -e 'role=mongo' -e 'mongo_create_users=True'
+
+sleep 5 #to allow mongo process to start, if you need it;
+mongo localhost <<EOF
+use edxapp;
+
+db.createUser(
+{
+user: "edxapp",
+pwd: "password",
+roles: [ "readWrite" ]
+}
+);
+
+use cs_comments_service;
+
+db.createUser(
+{
+user: "cs_comments_service",
+pwd: "cs_comments_service",
+roles: [ "readWrite" ]
+}
+);
+EOF
+eof
+sudo bash "$SCRIPTFILE"
+rm "$SCRIPTFILE"
+```
+Exit: ```exit``` and ```vagrant ssh``` back in. Start again with ```sudo su edxapp```, and run ```paver devstack lms```
+
 ###OR Create your own server from scratch...
 
 Download Ubuntu Server 12.0.4 ISO from: http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-server-amd64.iso
